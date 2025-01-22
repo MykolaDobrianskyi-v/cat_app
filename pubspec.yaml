@@ -1,14 +1,21 @@
 name: cat_app
 description: "A new Flutter project."
-publish_to: 'none'
+publish_to: "none"
 version: 0.1.0
 
 environment:
   sdk: ^3.5.4
 
 dependencies:
+  equatable: ^2.0.7
+
+  firebase_core: ^3.10.1
   flutter:
     sdk: flutter
+  flutter_bloc: ^9.0.0
+  firebase_auth: ^5.4.1
+  flutter_facebook_auth: ^7.1.1
+  google_sign_in: ^6.2.2
 
 dev_dependencies:
   flutter_test:
