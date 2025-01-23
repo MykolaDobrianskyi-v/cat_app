@@ -34,9 +34,11 @@ class LoginPage extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   LoginButton(
-                    onPressed: () => context.read<LoginBloc>().add(
-                          const OnLoginWithGoogle(),
-                        ),
+                    onPressed: () {
+                      context.read<LoginBloc>().add(
+                            const OnLoginWithGoogle(),
+                          );
+                    },
                     icon: Icons.g_mobiledata,
                     label: 'Google',
                     backgroundColor: Colors.redAccent,

@@ -1,5 +1,6 @@
 import 'package:cat_app/firebase_options.dart';
 import 'package:cat_app/repositories/login_repository.dart';
+import 'package:cat_app/screens/home/home_page.dart';
 import 'package:cat_app/screens/login/bloc/login_bloc.dart';
 import 'package:cat_app/screens/login/login_page.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -34,9 +35,17 @@ class MainApp extends StatelessWidget {
           ),
         ),
       ],
-      child: const MaterialApp(
-        home: Scaffold(
-          body: LoginPage(),
+      child: MaterialApp(
+        home: StreamBuilder<User?>(
+          stream: FirebaseAuth.instance.authStateChanges(),
+          builder: (context, AsyncSnapshot<User?> snapshot) {
+            if (snapshot.hasData && snapshot.data != null) {
+              return const HomePage();
+            } else if (snapshot.connectionState == ConnectionState.waiting) {
+              return const CircularProgressIndicator();
+            }
+            return const LoginPage();
+          },
         ),
       ),
     );
