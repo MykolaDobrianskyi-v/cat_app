@@ -5,9 +5,12 @@ part 'home_event.dart';
 part 'home_state.dart';
 
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
-  HomeBloc() : super(HomeInitial()) {
-    on<HomeEvent>((event, emit) {
-      // TODO: implement event handler
-    });
+  HomeBloc() : super(const HomeState()) {
+    on<HomeEvent>((event, emit) {});
+    on<OnChangeTab>(_onChangeTab);
+  }
+
+  void _onChangeTab(OnChangeTab event, Emitter emit) {
+    emit(HomeState(currentIndex: event.tabIndex));
   }
 }

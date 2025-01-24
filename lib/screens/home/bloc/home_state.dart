@@ -1,10 +1,12 @@
 part of 'home_bloc.dart';
 
-sealed class HomeState extends Equatable {
-  const HomeState();
-  
-  @override
-  List<Object> get props => [];
-}
+class HomeState extends Equatable {
+  final int currentIndex;
 
-final class HomeInitial extends HomeState {}
+  const HomeState({
+    this.currentIndex = 0,
+  });
+
+  @override
+  List<Object> get props => [currentIndex];
+}
