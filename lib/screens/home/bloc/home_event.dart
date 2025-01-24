@@ -6,3 +6,12 @@ sealed class HomeEvent extends Equatable {
   @override
   List<Object> get props => [];
 }
+
+class OnChangeTab extends HomeEvent {
+  final int tabIndex;
+
+  const OnChangeTab(this.tabIndex);
+
+  @override
+  List<Object> get props => [tabIndex];
+}
