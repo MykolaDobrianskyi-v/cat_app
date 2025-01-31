@@ -22,11 +22,20 @@ class OnAddToFavorite extends CatListEvent {
   List<Object?> get props => [cat];
 }
 
-class OnUpdatedFavoriteCats extends CatListEvent {
-  final List<Cat> cats;
+class OnCatChanged extends CatListEvent {
+  final Cat cat;
 
-  const OnUpdatedFavoriteCats({required this.cats});
+  const OnCatChanged({required this.cat});
 
   @override
-  List<Object> get props => [cats];
+  List<Object> get props => [cat];
+}
+
+class OnToggleFavorite extends CatListEvent {
+  final Cat cat;
+
+  const OnToggleFavorite({required this.cat});
+
+  @override
+  List<Object> get props => [cat];
 }

@@ -9,11 +9,12 @@ class CatListPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => CatListBloc(
-        catRepository: context.read(),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('CAT LIST'),
+        centerTitle: true,
       ),
-      child: BlocBuilder<CatListBloc, CatListState>(
+      body: BlocBuilder<CatListBloc, CatListState>(
         builder: (context, state) {
           if (state.isLoading ?? false) {
             return const Center(
@@ -25,6 +26,7 @@ class CatListPage extends StatelessWidget {
           return Padding(
             padding: const EdgeInsets.only(top: 60),
             child: CatListWidget(
+              key: ValueKey('cats'),
               cats: state.cats,
               onScrolledToEnd: () => context.read<CatListBloc>().add(
                     OnLoadMore(),

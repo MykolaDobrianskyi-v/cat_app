@@ -2,22 +2,22 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
-class CatImageCard extends StatefulWidget {
+class CatImageCard extends StatelessWidget {
   final String imageUrl;
   final VoidCallback onPressed;
+  final bool isFavorite;
+  final IconData icon;
+  final Color color;
 
   const CatImageCard({
     super.key,
     required this.imageUrl,
     required this.onPressed,
+    required this.isFavorite,
+    required this.icon,
+    required this.color,
   });
 
-  @override
-  State<CatImageCard> createState() => _CatImageCardState();
-}
-
-class _CatImageCardState extends State<CatImageCard> {
-  bool isFavorite = false;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -37,7 +37,7 @@ class _CatImageCardState extends State<CatImageCard> {
               child: CachedNetworkImage(
                 width: double.infinity,
                 fit: BoxFit.cover,
-                imageUrl: widget.imageUrl,
+                imageUrl: imageUrl,
                 placeholder: (context, url) => const Skeletonizer(
                   enabled: true,
                   child: Skeleton.replace(
@@ -55,15 +55,10 @@ class _CatImageCardState extends State<CatImageCard> {
             Align(
               alignment: Alignment.bottomRight,
               child: IconButton(
-                onPressed: () {
-                  setState(() {
-                    isFavorite = !isFavorite;
-                  });
-                  widget.onPressed();
-                },
+                onPressed: onPressed,
                 icon: Icon(
-                  Icons.favorite,
-                  color: isFavorite ? Colors.red : Colors.grey,
+                  icon,
+                  color: color,
                 ),
               ),
             ),

@@ -3,7 +3,7 @@ import 'package:path/path.dart';
 
 class DatabaseHelper {
   static const String _databaseName = 'cats.db';
-  static const int _databaseVersion = 3;
+  static const int _databaseVersion = 4;
 
   static Database? _database;
 
@@ -31,7 +31,8 @@ class DatabaseHelper {
     await db.execute('''
       CREATE TABLE cats (
         id TEXT PRIMARY KEY,
-        url TEXT NOT NULL
+        url TEXT NOT NULL,
+        isFavorite INTEGER DEFAULT 0
       )
     ''');
 
@@ -41,6 +42,7 @@ class DatabaseHelper {
         userId TEXT NOT NULL,
         catId TEXT NOT NULL,
         url TEXT NOT NULL,
+        isFavorite INTEGER DEFAULT 0,
         FOREIGN KEY (id) REFERENCES cats(id) ON DELETE CASCADE
       )
     ''');
@@ -48,13 +50,14 @@ class DatabaseHelper {
 
   static Future<void> _migrate(
       Database db, int oldVersion, int newVersion) async {
-    if (oldVersion < 3) {
+    if (oldVersion < 4) {
       await db.execute('''
         CREATE TABLE IF NOT EXISTS favorite (
           id TEXT PRIMARY KEY,
           userId TEXT NOT NULL,
           catId TEXT NOT NULL,
           url TEXT NOT NULL,
+          isFavorite INTEGER DEFAULT 0,
           FOREIGN KEY (id) REFERENCES cats(id) ON DELETE CASCADE
         )
       ''');

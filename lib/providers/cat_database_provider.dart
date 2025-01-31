@@ -32,12 +32,13 @@ class CatDatabaseProvider {
     await _database.insert(
       'favorite',
       {
-        'id': '${userId}_${cat.id}',
+        'id': cat.id,
         'userId': userId,
         'catId': cat.id,
+        'isFavorite': cat.isFavorite ? 0 : 1,
         'url': cat.url,
       },
-      conflictAlgorithm: ConflictAlgorithm.replace,
+      conflictAlgorithm: ConflictAlgorithm.ignore,
     );
   }
 
@@ -60,5 +61,15 @@ class CatDatabaseProvider {
           (json) => CatModel.fromJson(json),
         )
         .toList();
+  }
+
+  Future<bool> isFavorite(String userId, String catId) async {
+    final result = await _database.query(
+      'favorite',
+      where: 'userId = ? AND catId = ?',
+      whereArgs: [userId, catId],
+    );
+
+    return result.isNotEmpty;
   }
 }
