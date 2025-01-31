@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:bloc/bloc.dart';
 import 'package:cat_app/models/cat.dart';
 
@@ -17,9 +19,23 @@ class CatListBloc extends Bloc<CatListEvent, CatListState> {
     on<CatListEvent>((event, emit) {});
     on<OnInit>(_onInit);
     on<OnLoadMore>(_onLoadMore);
-    on<OnAddToFavorite>(_onAddToFavorite);
-    on<OnUpdatedFavoriteCats>(_onUpdatedFavoriteCats);
+    on<OnToggleFavorite>(_onToggleFavorite);
+    on<OnCatChanged>(_onUpdatedFavoriteCats);
     add(OnInit());
+    _init();
+  }
+  late final StreamSubscription _streamSubscription;
+
+  @override
+  Future<void> close() async {
+    await _streamSubscription.cancel();
+    return super.close();
+  }
+
+  void _init() {
+    _streamSubscription = _catRepository.favCatsStream.listen((cats) {
+      add(OnCatChanged(cat: cats));
+    });
   }
 
   void _onInit(OnInit event, Emitter<CatListState> emit) async {
@@ -51,15 +67,19 @@ class CatListBloc extends Bloc<CatListEvent, CatListState> {
     emit(state.copyWith(cats: state.cats + newCats));
   }
 
-  void _onAddToFavorite(OnAddToFavorite event, Emitter<CatListState> emit) {
-    print('CATACACATATCATCAAT:    ${event.cat}');
-    _catRepository.addToFavorite(event.cat);
+  void _onToggleFavorite(
+      OnToggleFavorite event, Emitter<CatListState> emit) async {
+    await _catRepository.toggleFavorite(event.cat);
   }
 
-  void _onUpdatedFavoriteCats(
-      OnUpdatedFavoriteCats event, Emitter<CatListState> emit) {
-    emit(
-      state.copyWith(favCats: event.cats),
-    );
+  void _onUpdatedFavoriteCats(OnCatChanged event, Emitter<CatListState> emit) {
+    final updatedCats = state.cats.map((cat) {
+      if (cat.id == event.cat.id) {
+        return event.cat;
+      }
+      return cat;
+    }).toList();
+
+    emit(state.copyWith(cats: updatedCats));
   }
 }

@@ -7,13 +7,22 @@ sealed class FavoriteCatsEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class OnAddToFavorite extends FavoriteCatsEvent {
-  final List<Cat> cats;
+class OnToggleFavorite extends FavoriteCatsEvent {
+  final Cat cat;
 
-  const OnAddToFavorite({required this.cats});
+  const OnToggleFavorite({required this.cat});
 
   @override
-  List<Object> get props => [cats];
+  List<Object> get props => [cat];
 }
 
 class OnInit extends FavoriteCatsEvent {}
+
+class OnUpdatedFavoriteCat extends FavoriteCatsEvent {
+  final Cat favCat;
+
+  const OnUpdatedFavoriteCat({required this.favCat});
+
+  @override
+  List<Object> get props => [favCat];
+}

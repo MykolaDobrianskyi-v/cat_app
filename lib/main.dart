@@ -5,6 +5,8 @@ import 'package:cat_app/providers/cat_api_provider.dart';
 import 'package:cat_app/providers/cat_database_provider.dart';
 import 'package:cat_app/repositories/cat_repository.dart';
 import 'package:cat_app/repositories/login_repository.dart';
+import 'package:cat_app/screens/cat_list/bloc/cat_list_bloc.dart';
+import 'package:cat_app/screens/favorite/bloc/favorite_cats_bloc.dart';
 import 'package:cat_app/screens/home/home_page.dart';
 import 'package:cat_app/screens/login/bloc/login_bloc.dart';
 import 'package:cat_app/screens/login/login_page.dart';
@@ -66,6 +68,16 @@ class MainApp extends StatelessWidget {
                 googleSignIn: GoogleSignIn(),
                 facebookAuth: FacebookAuth.instance,
               ),
+            ),
+          ),
+          BlocProvider(
+            create: (context) => CatListBloc(
+              catRepository: context.read(),
+            ),
+          ),
+          BlocProvider(
+            create: (context) => FavoriteCatsBloc(
+              catRepository: context.read(),
             ),
           ),
         ],

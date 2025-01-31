@@ -1,6 +1,6 @@
+import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:cat_app/models/cat.dart';
-
 import 'package:cat_app/repositories/cat_repository.dart';
 import 'package:equatable/equatable.dart';
 
@@ -14,24 +14,67 @@ class FavoriteCatsBloc extends Bloc<FavoriteCatsEvent, FavoriteCatsState> {
     required CatRepository catRepository,
   })  : _catRepository = catRepository,
         super(const FavoriteCatsState()) {
-    on<FavoriteCatsEvent>((event, emit) {});
-    on<OnAddToFavorite>(_onAddToFavorite);
+    on<OnToggleFavorite>(_onToggleFavorite);
     on<OnInit>(_onInit);
+    on<OnUpdatedFavoriteCat>(_onUpdatedFavoriteCats);
 
     add(OnInit());
+    _init();
   }
 
-  void _onAddToFavorite(
-      OnAddToFavorite event, Emitter<FavoriteCatsState> emit) {
-    emit(state.copyWith(favCats: event.cats));
+  late final StreamSubscription _streamSubscription;
+
+  void _init() {
+    _streamSubscription = _catRepository.favCatsStream.listen((favCat) {
+      add(OnUpdatedFavoriteCat(favCat: favCat));
+    });
   }
 
-  void _onInit(OnInit event, Emitter<FavoriteCatsState> emit) async {
+  @override
+  Future<void> close() async {
+    await _streamSubscription.cancel();
+    return super.close();
+  }
+
+  void _onToggleFavorite(
+      OnToggleFavorite event, Emitter<FavoriteCatsState> emit) async {
+    await _catRepository.toggleFavorite(event.cat);
+  }
+
+  Future<void> _onInit(OnInit event, Emitter<FavoriteCatsState> emit) async {
     emit(state.copyWith(isLoading: true));
     final cats = await _catRepository.fetchFavoriteCats();
+
     emit(state.copyWith(
       favCats: cats,
       isLoading: false,
     ));
+  }
+
+  void _onUpdatedFavoriteCats(
+      OnUpdatedFavoriteCat event, Emitter<FavoriteCatsState> emit) {
+    print('STARTED! ${event.favCat}');
+    List<Cat> updatedCats = [...state.favCats];
+    if (event.favCat.isFavorite) {
+      for (int index = 0; index < state.favCats.length; index++) {
+        if (state.favCats[index].id == event.favCat.id) {
+          print('IS LIKED');
+          updatedCats[index] = event.favCat;
+          return;
+        }
+      }
+      updatedCats.add(event.favCat);
+    } else {
+      for (final cat in state.favCats) {
+        if (cat.id == event.favCat.id) {
+          updatedCats.removeWhere((cat) => cat.id == event.favCat.id);
+          break;
+        }
+      }
+    }
+    print('UPADATED CATS:  ${updatedCats}');
+    print('STATE CATS === ${state.favCats == updatedCats}');
+
+    emit(state.copyWith(favCats: updatedCats));
   }
 }

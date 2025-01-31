@@ -44,28 +44,27 @@ class _CatListWidgetState extends State<CatListWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => CatListBloc(
-        catRepository: context.read(),
+    return ListView.separated(
+      separatorBuilder: (context, index) => const SizedBox(
+        height: 20,
       ),
-      child: BlocBuilder<CatListBloc, CatListState>(
-        builder: (context, state) {
-          return ListView.separated(
-            separatorBuilder: (context, index) => const SizedBox(
-              height: 20,
-            ),
-            controller: scrollController,
-            itemCount: widget.cats.length,
-            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 6),
-            itemBuilder: (context, index) => CatImageCard(
-              imageUrl: widget.cats[index].url,
-              onPressed: () {
-                context.read<CatListBloc>().add(
-                      OnAddToFavorite(cat: widget.cats[index]),
-                    );
-              },
-            ),
-          );
+      controller: scrollController,
+      itemCount: widget.cats.length,
+      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 6),
+      itemBuilder: (context, index) => CatImageCard(
+        key: ValueKey(widget.cats[index].id),
+        icon: widget.cats[index].isFavorite
+            ? Icons.favorite
+            : Icons.favorite_border,
+        color: widget.cats[index].isFavorite ? Colors.red : Colors.grey,
+        isFavorite: widget.cats[index].isFavorite,
+        imageUrl: widget.cats[index].url,
+        onPressed: () {
+          context.read<CatListBloc>().add(
+                OnToggleFavorite(
+                  cat: widget.cats[index],
+                ),
+              );
         },
       ),
     );
