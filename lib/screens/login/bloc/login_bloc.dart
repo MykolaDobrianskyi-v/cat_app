@@ -15,6 +15,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     on<LoginEvent>((event, emit) {});
     on<OnLoginWithGoogle>(_signInWithGoogle);
     on<OnLoginWithFacebook>(_signInWithFacebook);
+    on<OnSignOut>(_signOut);
   }
 
   Future<void> _signInWithGoogle(
@@ -25,5 +26,9 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   Future<void> _signInWithFacebook(
       OnLoginWithFacebook event, Emitter<LoginState> emit) async {
     _loginRepository.signInWithFacebook();
+  }
+
+  Future<void> _signOut(OnSignOut event, Emitter<LoginState> emit) async {
+    await _loginRepository.signOut();
   }
 }
