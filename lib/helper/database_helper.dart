@@ -46,6 +46,14 @@ class DatabaseHelper {
         FOREIGN KEY (id) REFERENCES cats(id) ON DELETE CASCADE
       )
     ''');
+    await db.execute('''
+    CREATE TABLE profile (
+      id TEXT PRIMARY KEY,
+      image TEXT NOT NULL,
+      username TEXT NOT NULL,
+      email TEXT NOT NULL
+      )
+''');
   }
 
   static Future<void> _migrate(

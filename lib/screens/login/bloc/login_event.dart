@@ -19,3 +19,5 @@ class OnLoginWithFacebook extends LoginEvent {
   @override
   List<Object?> get props => [];
 }
+
+class OnSignOut extends LoginEvent {}

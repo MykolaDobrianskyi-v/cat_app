@@ -17,6 +17,7 @@ class LoginPage extends StatelessWidget {
         create: (context) => LoginBloc(
           auth: FirebaseAuth.instance,
           loginRepository: LoginRepository(
+            userRepository: context.read(),
             googleSignIn: GoogleSignIn(),
             facebookAuth: FacebookAuth.instance,
           ),

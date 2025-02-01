@@ -3,13 +3,16 @@ import 'package:cat_app/firebase_options.dart';
 import 'package:cat_app/helper/database_helper.dart';
 import 'package:cat_app/providers/cat_api_provider.dart';
 import 'package:cat_app/providers/cat_database_provider.dart';
+import 'package:cat_app/providers/profile_database_provider.dart';
 import 'package:cat_app/repositories/cat_repository.dart';
 import 'package:cat_app/repositories/login_repository.dart';
+import 'package:cat_app/repositories/user_repository.dart';
 import 'package:cat_app/screens/cat_list/bloc/cat_list_bloc.dart';
 import 'package:cat_app/screens/favorite/bloc/favorite_cats_bloc.dart';
 import 'package:cat_app/screens/home/home_page.dart';
 import 'package:cat_app/screens/login/bloc/login_bloc.dart';
 import 'package:cat_app/screens/login/login_page.dart';
+import 'package:cat_app/screens/profile/bloc/profile_bloc.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -41,11 +44,19 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiRepositoryProvider(
       providers: [
+        RepositoryProvider(
+          create: (context) => UserRepository(
+            databaseProvider: ProfileDatabaseProvider(database: database),
+          ),
+        ),
         RepositoryProvider(create: (context) => FirebaseAuth.instance),
         RepositoryProvider(create: (context) => database),
         RepositoryProvider(create: (context) => ApiClient(dio: Dio())),
         RepositoryProvider(
-            create: (context) => CatDatabaseProvider(database: context.read())),
+          create: (context) => CatDatabaseProvider(
+            database: context.read(),
+          ),
+        ),
         RepositoryProvider(
           create: (context) => CatApiProvider(
             dio: context.read(),
@@ -65,6 +76,9 @@ class MainApp extends StatelessWidget {
             create: (_) => LoginBloc(
               auth: FirebaseAuth.instance,
               loginRepository: LoginRepository(
+                userRepository: UserRepository(
+                    databaseProvider:
+                        ProfileDatabaseProvider(database: database)),
                 googleSignIn: GoogleSignIn(),
                 facebookAuth: FacebookAuth.instance,
               ),
@@ -80,6 +94,8 @@ class MainApp extends StatelessWidget {
               catRepository: context.read(),
             ),
           ),
+          BlocProvider(
+              create: (context) => ProfileBloc(userRepository: context.read()))
         ],
         child: MaterialApp(
           home: StreamBuilder<User?>(
