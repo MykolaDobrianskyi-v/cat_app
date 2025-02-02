@@ -1,17 +1,12 @@
 import 'package:dio/dio.dart';
 
-class ApiClient {
+abstract class ApiClient {
   final Dio _dio;
 
   ApiClient({
     required Dio dio,
-  }) : _dio = dio {
-    _dio.options = BaseOptions(
-      baseUrl: const String.fromEnvironment('catApiUrl'),
-      headers: {'x-api-key': const String.fromEnvironment('catApiKey')},
-      responseType: ResponseType.json,
-    );
-  }
+  }) : _dio = dio;
+
   Future<Response<T>> get<T>(
     String path, {
     Object? data,
@@ -45,4 +40,23 @@ class ApiClient {
           cancelToken: cancelToken,
           onReceiveProgress: onReceiveProgress,
           onSendProgress: onSendProgress);
+}
+
+class CatApiClient extends ApiClient {
+  CatApiClient({required super.dio}) {
+    _dio.options = BaseOptions(
+      baseUrl: const String.fromEnvironment('catApiUrl'),
+      headers: {'x-api-key': const String.fromEnvironment('catApiKey')},
+      responseType: ResponseType.json,
+    );
+  }
+}
+
+class CatFactsClient extends ApiClient {
+  CatFactsClient({required super.dio}) {
+    _dio.options = BaseOptions(
+      baseUrl: const String.fromEnvironment('catFactUrl'),
+      responseType: ResponseType.json,
+    );
+  }
 }

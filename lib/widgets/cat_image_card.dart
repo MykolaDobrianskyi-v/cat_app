@@ -8,6 +8,7 @@ class CatImageCard extends StatelessWidget {
   final bool isFavorite;
   final IconData icon;
   final Color color;
+  final VoidCallback? onTap;
 
   const CatImageCard({
     super.key,
@@ -16,6 +17,7 @@ class CatImageCard extends StatelessWidget {
     required this.isFavorite,
     required this.icon,
     required this.color,
+    this.onTap,
   });
 
   @override
@@ -34,21 +36,24 @@ class CatImageCard extends StatelessWidget {
             ClipRRect(
               borderRadius:
                   const BorderRadius.vertical(top: Radius.circular(16)),
-              child: CachedNetworkImage(
-                width: double.infinity,
-                fit: BoxFit.cover,
-                imageUrl: imageUrl,
-                placeholder: (context, url) => const Skeletonizer(
-                  enabled: true,
-                  child: Skeleton.replace(
-                    replacement: Bone(
-                      width: double.infinity,
-                      height: 200,
+              child: GestureDetector(
+                onTap: onTap,
+                child: CachedNetworkImage(
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                  imageUrl: imageUrl,
+                  placeholder: (context, url) => const Skeletonizer(
+                    enabled: true,
+                    child: Skeleton.replace(
+                      replacement: Bone(
+                        width: double.infinity,
+                        height: 200,
+                      ),
+                      child: SizedBox(),
                     ),
-                    child: SizedBox(),
                   ),
+                  errorWidget: (context, url, error) => const Icon(Icons.error),
                 ),
-                errorWidget: (context, url, error) => const Icon(Icons.error),
               ),
             ),
             const SizedBox(height: 10),

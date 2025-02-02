@@ -37,6 +37,7 @@ class CatDatabaseProvider {
         'catId': cat.id,
         'isFavorite': cat.isFavorite ? 0 : 1,
         'url': cat.url,
+        'fact': cat.fact,
       },
       conflictAlgorithm: ConflictAlgorithm.ignore,
     );
