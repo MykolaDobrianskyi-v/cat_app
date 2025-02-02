@@ -3,6 +3,7 @@ import 'package:cat_app/firebase_options.dart';
 import 'package:cat_app/helper/database_helper.dart';
 import 'package:cat_app/providers/cat_api_provider.dart';
 import 'package:cat_app/providers/cat_database_provider.dart';
+import 'package:cat_app/providers/cat_facts_provider.dart';
 import 'package:cat_app/providers/profile_database_provider.dart';
 import 'package:cat_app/repositories/cat_repository.dart';
 import 'package:cat_app/repositories/login_repository.dart';
@@ -51,7 +52,10 @@ class MainApp extends StatelessWidget {
         ),
         RepositoryProvider(create: (context) => FirebaseAuth.instance),
         RepositoryProvider(create: (context) => database),
-        RepositoryProvider(create: (context) => ApiClient(dio: Dio())),
+        RepositoryProvider(create: (context) => CatApiClient(dio: Dio())),
+        RepositoryProvider(create: (context) => CatFactsClient(dio: Dio())),
+        RepositoryProvider(
+            create: (context) => CatFactsProvider(client: context.read())),
         RepositoryProvider(
           create: (context) => CatDatabaseProvider(
             database: context.read(),
@@ -64,6 +68,7 @@ class MainApp extends StatelessWidget {
         ),
         RepositoryProvider(
           create: (context) => CatRepository(
+            catFactsProvider: context.read(),
             auth: context.read(),
             catApiProvider: context.read(),
             catDatabaseProvider: context.read(),

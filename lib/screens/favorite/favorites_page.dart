@@ -12,7 +12,6 @@ class FavoritesPage extends StatelessWidget {
       appBar: AppBar(title: const Text('FAVORITE CATS'), centerTitle: true),
       body: BlocBuilder<FavoriteCatsBloc, FavoriteCatsState>(
         builder: (context, state) {
-          print('UPDATED CATS!!!!!!!!!!!!!! ${state.favCats}');
           if (state.isLoading) {
             return const Center(
                 child: CircularProgressIndicator(color: Colors.amber));

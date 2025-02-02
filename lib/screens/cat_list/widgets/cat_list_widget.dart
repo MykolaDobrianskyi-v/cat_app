@@ -1,4 +1,5 @@
 import 'package:cat_app/models/cat.dart';
+import 'package:cat_app/screens/cat_detail/cat_detail_page.dart';
 import 'package:cat_app/screens/cat_list/bloc/cat_list_bloc.dart';
 import 'package:cat_app/widgets/cat_image_card.dart';
 
@@ -51,21 +52,31 @@ class _CatListWidgetState extends State<CatListWidget> {
       controller: scrollController,
       itemCount: widget.cats.length,
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 6),
-      itemBuilder: (context, index) => CatImageCard(
-        key: ValueKey(widget.cats[index].id),
-        icon: widget.cats[index].isFavorite
-            ? Icons.favorite
-            : Icons.favorite_border,
-        color: widget.cats[index].isFavorite ? Colors.red : Colors.grey,
-        isFavorite: widget.cats[index].isFavorite,
-        imageUrl: widget.cats[index].url,
-        onPressed: () {
-          context.read<CatListBloc>().add(
-                OnToggleFavorite(
-                  cat: widget.cats[index],
-                ),
-              );
-        },
+      itemBuilder: (context, index) => Hero(
+        tag: 'cat_${widget.cats[index].id}',
+        child: CatImageCard(
+          onTap: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                  builder: (context) => const CatDetailPage(),
+                  settings: RouteSettings(arguments: widget.cats[index])),
+            );
+          },
+          key: ValueKey(widget.cats[index].id),
+          icon: widget.cats[index].isFavorite
+              ? Icons.favorite
+              : Icons.favorite_border,
+          color: widget.cats[index].isFavorite ? Colors.red : Colors.grey,
+          isFavorite: widget.cats[index].isFavorite,
+          imageUrl: widget.cats[index].url,
+          onPressed: () {
+            context.read<CatListBloc>().add(
+                  OnToggleFavorite(
+                    cat: widget.cats[index],
+                  ),
+                );
+          },
+        ),
       ),
     );
   }
