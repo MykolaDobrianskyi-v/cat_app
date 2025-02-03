@@ -20,21 +20,20 @@ class ProfileCardWidget extends StatelessWidget {
     return Center(
       child: Column(
         children: [
-          SizedBox(
-            width: 100,
-            height: 100,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(
-                50,
-              ),
-              child: CachedNetworkImage(
-                imageUrl: image ?? '',
-                fit: BoxFit.cover,
-                errorWidget: (context, url, error) =>
-                    Image.asset('assets/default_avatar.png'),
+          if (image != null)
+            SizedBox(
+              width: 100,
+              height: 100,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(
+                  50,
+                ),
+                child: CachedNetworkImage(
+                  imageUrl: image!,
+                  fit: BoxFit.cover,
+                ),
               ),
             ),
-          ),
           const SizedBox(
             height: 40,
           ),

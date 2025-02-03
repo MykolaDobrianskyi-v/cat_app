@@ -32,8 +32,8 @@ class DatabaseHelper {
       CREATE TABLE cats (
         id TEXT PRIMARY KEY,
         url TEXT NOT NULL,
-        fact TEXT NOT NULL,
-        isFavorite INTEGER DEFAULT 0
+        fact TEXT NOT NULL
+        
       )
     ''');
 

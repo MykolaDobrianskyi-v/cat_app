@@ -11,7 +11,7 @@ class CatListPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('CAT LIST'),
+        title: const Text('CAT LIST'),
         centerTitle: true,
       ),
       body: BlocBuilder<CatListBloc, CatListState>(
@@ -23,14 +23,29 @@ class CatListPage extends StatelessWidget {
               ),
             );
           }
+          if (state.isOffline && state.cats.isEmpty) {
+            return const Center(
+              child: Text('No internet connection!'),
+            );
+          }
           return Padding(
             padding: const EdgeInsets.only(top: 60),
-            child: CatListWidget(
-              key: ValueKey('cats'),
-              cats: state.cats,
-              onScrolledToEnd: () => context.read<CatListBloc>().add(
-                    OnLoadMore(),
-                  ),
+            child: RefreshIndicator(
+              onRefresh: () async {
+                if (!state.isOffline) {
+                  context.read<CatListBloc>().add(OnLoadMore());
+                }
+              },
+              child: CatListWidget(
+                  key: const ValueKey('cats'),
+                  cats: state.cats,
+                  onScrolledToEnd: () {
+                    if (!state.isOffline) {
+                      context.read<CatListBloc>().add(
+                            OnLoadMore(),
+                          );
+                    }
+                  }),
             ),
           );
         },

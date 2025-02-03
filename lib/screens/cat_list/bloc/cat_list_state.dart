@@ -4,6 +4,7 @@ class CatListState extends Equatable {
   final bool isFavorite;
   final int page;
   final List<Cat> cats;
+  final bool isOffline;
 
   final String? imageUrl;
   final bool? isLoading;
@@ -15,6 +16,7 @@ class CatListState extends Equatable {
     this.cats = const [],
     this.page = 0,
     this.isLoadingMore,
+    this.isOffline = false,
   });
 
   CatListState copyWith({
@@ -24,6 +26,7 @@ class CatListState extends Equatable {
     List<Cat>? cats,
     int? page,
     bool? isLoadingMore,
+    bool? isOffline,
   }) {
     return CatListState(
       imageUrl: imageUrl ?? this.imageUrl,
@@ -32,10 +35,11 @@ class CatListState extends Equatable {
       page: page ?? this.page,
       isLoadingMore: isLoadingMore ?? this.isLoadingMore,
       isFavorite: isFavorite ?? this.isFavorite,
+      isOffline: isOffline ?? this.isOffline,
     );
   }
 
   @override
   List<Object?> get props =>
-      [imageUrl, isLoading, cats, page, isLoadingMore, isFavorite];
+      [imageUrl, isLoading, cats, page, isLoadingMore, isFavorite, isOffline];
 }

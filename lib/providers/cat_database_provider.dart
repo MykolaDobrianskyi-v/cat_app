@@ -1,4 +1,5 @@
 import 'package:cat_app/models/cat.dart';
+import 'package:cat_app/models/cat_db_model.dart';
 import 'package:cat_app/models/cat_model.dart';
 
 import 'package:sqflite/sqflite.dart';
@@ -10,12 +11,12 @@ class CatDatabaseProvider {
     required Database database,
   }) : _database = database;
 
-  Future<List<CatModel>> fetchCat() async {
+  Future<List<CatDbModel>> fetchCat() async {
     final catsJson = await _database.query('cats');
-    return catsJson.map((json) => CatModel.fromJson(json)).toList();
+    return catsJson.map((json) => CatDbModel.fromJson(json)).toList();
   }
 
-  Future<void> insertCat(CatModel cat) async {
+  Future<void> insertCat(CatDbModel cat) async {
     await _database.insert(
       'cats',
       cat.toJson(),
@@ -23,7 +24,7 @@ class CatDatabaseProvider {
     );
   }
 
-  Future<void> insertAllCats(List<CatModel> cats) async {
+  Future<void> insertAllCats(List<CatDbModel> cats) async {
     final asyncCats = cats.map((cat) => insertCat(cat));
     await Future.wait(asyncCats);
   }
@@ -57,6 +58,7 @@ class CatDatabaseProvider {
       where: 'userId = ?',
       whereArgs: [userId],
     );
+
     return favoriteCatJson
         .map(
           (json) => CatModel.fromJson(json),
