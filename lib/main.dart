@@ -1,6 +1,7 @@
 import 'package:cat_app/client/dio_client.dart';
 import 'package:cat_app/firebase_options.dart';
 import 'package:cat_app/helper/database_helper.dart';
+import 'package:cat_app/helper/network_helper.dart';
 import 'package:cat_app/providers/cat_api_provider.dart';
 import 'package:cat_app/providers/cat_database_provider.dart';
 import 'package:cat_app/providers/cat_facts_provider.dart';
@@ -14,6 +15,7 @@ import 'package:cat_app/screens/home/home_page.dart';
 import 'package:cat_app/screens/login/bloc/login_bloc.dart';
 import 'package:cat_app/screens/login/login_page.dart';
 import 'package:cat_app/screens/profile/bloc/profile_bloc.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -61,6 +63,7 @@ class MainApp extends StatelessWidget {
             database: context.read(),
           ),
         ),
+        RepositoryProvider(create: (context) => NetworkHelper()),
         RepositoryProvider(
           create: (context) => CatApiProvider(
             dio: context.read(),
@@ -68,6 +71,8 @@ class MainApp extends StatelessWidget {
         ),
         RepositoryProvider(
           create: (context) => CatRepository(
+            userRepository: context.read(),
+            networkHelper: context.read(),
             catFactsProvider: context.read(),
             auth: context.read(),
             catApiProvider: context.read(),
@@ -91,6 +96,7 @@ class MainApp extends StatelessWidget {
           ),
           BlocProvider(
             create: (context) => CatListBloc(
+              networkHelper: context.read(),
               catRepository: context.read(),
             ),
           ),
@@ -103,15 +109,30 @@ class MainApp extends StatelessWidget {
               create: (context) => ProfileBloc(userRepository: context.read()))
         ],
         child: MaterialApp(
-          home: StreamBuilder<User?>(
-            stream: FirebaseAuth.instance.authStateChanges(),
-            builder: (context, AsyncSnapshot<User?> snapshot) {
-              if (snapshot.hasData && snapshot.data != null) {
-                return const HomePage();
-              } else if (snapshot.connectionState == ConnectionState.waiting) {
+          home: StreamBuilder(
+            stream: Connectivity().onConnectivityChanged,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
                 return const CircularProgressIndicator();
               }
-              return const LoginPage();
+
+              if (snapshot.data?.contains(ConnectivityResult.wifi) == false &&
+                  snapshot.data?.contains(ConnectivityResult.mobile) == false) {
+                return const HomePage();
+              }
+
+              return StreamBuilder<User?>(
+                stream: FirebaseAuth.instance.authStateChanges(),
+                builder: (context, AsyncSnapshot<User?> snapshot) {
+                  if (snapshot.hasData && snapshot.data != null) {
+                    return const HomePage();
+                  } else if (snapshot.connectionState ==
+                      ConnectionState.waiting) {
+                    return const CircularProgressIndicator();
+                  }
+                  return const LoginPage();
+                },
+              );
             },
           ),
         ),

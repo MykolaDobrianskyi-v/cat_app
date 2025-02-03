@@ -16,6 +16,11 @@ class FavoritesPage extends StatelessWidget {
             return const Center(
                 child: CircularProgressIndicator(color: Colors.amber));
           }
+          if (state.favCats.isEmpty) {
+            return const Center(
+              child: Text('No favorite cats'),
+            );
+          }
           return Padding(
             padding: const EdgeInsets.only(top: 60),
             child: FavoriteCatsListWidget(
